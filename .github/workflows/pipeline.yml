@@ -28,6 +28,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean package -DskipTests
 
+      # 🔍 Debug secrets presence (TEMPORARY)
+      - name: Debug secrets presence
+        run: |
+          echo "Username exists: ${{ secrets.DOCKER_USERNAME != '' }}"
+          echo "Password exists: ${{ secrets.DOCKER_PASSWORD != '' }}"
+
       # 4️⃣ Log in to Docker Hub
       - name: Docker Login
         uses: docker/login-action@v3
@@ -37,16 +43,8 @@ jobs:
 
       # 5️⃣ Build Docker image
       - name: Build Docker image
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest .
 
       # 6️⃣ Push Docker image
       - name: Push Docker image
-        run: |
-          docker push ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
-
-      # 7️⃣ (Optional) Deploy using Docker Compose (Self-hosted server)
-      # - name: Deploy to server
-      #   run: |
-      #     docker-compose pull
-      #     docker-compose up -d
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/spring-boot-docker:latest
